@@ -5,6 +5,8 @@ authors: Jamila Sani & Kehinde Adeniyi
 editor: visual
 ---
 
+GitHub:<https://github.com/kadeniyi-bot/727_group_project.git>
+
 ## **SUMMARY OF PROPOSAL**
 
 This project attempts to analyze how measles outbreaks are described across official CDC reports and explore how these outbreak patterns relate to demographic characteristics of US states. Instead of examining public sentiment, the study focuses on public health reporting patterns, extracting state level outbreak mentions from CDC text and comparing their geographic patterns with demographic variables from the American Community Survey (ACS). The goal is to understand which states appear most frequently in outbreak narratives, what themes emerge from CDC reporting, and whether demographic factors help explain the distribution of outbreaks across states.
@@ -79,7 +81,7 @@ cdc_clean <- cdc_data %>%
   filter(str_length(text) > 30)
 
 write_csv(cdc_clean, "cdc_measles_text.csv")
-print(head(cdc_clean, 20))
+print(head(cdc_clean, 10))
 view(cdc_clean)
 
 ```
@@ -94,7 +96,7 @@ cdc <- read_csv("cdc_measles_text.csv")
 glimpse(cdc)
 
 # View a sample of rows
-head(cdc, 20)
+head(cdc, 10)
 
 # Check how many rows per URL - 367 rows total (281 and 86)
 cdc %>% count(url)
@@ -108,7 +110,7 @@ cdc %>%
   mutate(nchar = nchar(text)) %>%
   arrange(desc(nchar)) %>%
   select(text) %>%
-  head(20) 
+  head(10) 
 
 ```
 
@@ -247,7 +249,7 @@ edu_data <- edu_dat[-1,] %>%
 
 ```
 
-#### Merge both ACS demographics data 
+#### Merge both ACS demographics data
 
 ```{r}
 acs_data_full <- acs_data %>%
@@ -260,6 +262,7 @@ view(acs_data)
 ```
 
 ### Merge CDC and ACS Data
+
 ```{r}
 merged_data <- state_counts %>%
   left_join(acs_data_full, by = "state")
@@ -308,7 +311,8 @@ merged_data %>%
     title = "Top 10 States Mentioned in CDC Measles Outbreak Text",
     x = "State",
     y = "Outbreak Mentions"
-  )
+  ) 
+
 
 
 ```
@@ -328,7 +332,7 @@ merged_data %>%
     title = "Top 10 States by Outbreak Mentions per Million Residents",
     x = "State",
     y = "Outbreak Mentions per Million People"
-  )
+  ) 
 
 ```
 
@@ -345,7 +349,6 @@ ggplot(merged_data, aes(x = as.numeric(population), y = n)) +
     x = "Population",
     y = "Outbreak Mentions"
   )
-
 ```
 
 Larger states tend to appear more often in CDC outbreak reporting, which shows a positive relationship between population size and the number of reported measles events.
@@ -360,7 +363,7 @@ ggplot(merged_data, aes(x = pct_bachelors, y = n)) +
     title = "Outbreak Mentions vs Percent with Bachelor's Degree",
     x = "Percent Bachelor's",
     y = "Outbreak Mentions"
-  )
+  ) 
 
 ```
 
@@ -478,7 +481,7 @@ top_terms %>%
     title = "Top Terms for Each Topic",
     x = "Terms",
     y = "Beta (Topic Weight)"
-  )
+  ) 
 
 ```
 
@@ -516,10 +519,10 @@ topic_table <- tibble(
     "State Level Outbreaks and Vaccination Status"
   ),
   top_terms = c(
-    "measles, united, jurisdictions, outbreaks, January, total",
-    "measles, vaccine, resources, health, travel, outbreaks",
-    "measles, mmwr, outbreak, united, jurisdictions, reported",
-    "measles, york, outbreaks, reported, vaccination, unvaccinated"
+    "united, outbreak, district, jurisdictions, january, city",
+    "united, outbreaks, mmwr, january, outbreak, communities",
+    "vaccine, resources, health, travel, outbreaks, view",
+    "mmwr, york, jurisdictions, health, outbreaks, reported"
   ),
   summary = c(
     "National case reporting and jurisdiction summaries.",
@@ -530,6 +533,8 @@ topic_table <- tibble(
 )
 
 topic_table
+  
+view(topic_table)
 
 ```
 
@@ -570,4 +575,3 @@ Topic modeling identified four themes: national outbreak summaries, vaccination 
 
 **3. Do demographic factors help explain outbreak mention patterns?**\
 Population showed a strong relationship with CDC mention frequency, while education level showed a weak or negligible relationship. Normalized values indicated that some smaller states had relatively higher outbreak intensity.
-
